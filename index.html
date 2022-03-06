@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Practice</title>
+   
+</head>
+<body>
+    <input placeholder="Enter your name" id="input" /> <br> <br>
+    <input type="text" id="input1" placeholder="Enter your roll no"> <br> <br> 
+    <input type="text" id="input2" placeholder="Enter your class"/> <br> <br> 
+    <input type="text" id="input3" placeholder="Enter your Section"/> <br> <br>
+
+    <button id="btn" >Send Data</button>
+   
+    <button id="btn1" >Get data</button>
+    <button id="btn2" >Update Data</button>
+    <button id="btn3">Remove Data</button>
+   
+</body>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.8/firebase-app.js";
+import {getDatabase, ref ,get,child, set,  update , remove} from  "https://www.gstatic.com/firebasejs/9.6.8/firebase-database.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyCwEPKuaq_l8lkS6QJGo-8U-dyRx8fONmE",
+  authDomain: "database-practice-62355.firebaseapp.com",
+  databaseURL: "https://database-practice-62355-default-rtdb.firebaseio.com",
+  projectId: "database-practice-62355",
+  storageBucket: "database-practice-62355.appspot.com",
+  messagingSenderId: "437814036165",
+  appId: "1:437814036165:web:7d4267be37eb48ef9a92ac"
+};
+
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase()
+
+
+let name = document.getElementById("input")
+    let rollNo = document.getElementById("input1")
+    let Class  = document.getElementById("input2")
+    let section = document.getElementById("input3")
+    const sendBtn = document.getElementById("btn")
+    const getBtn = document.getElementById("btn1")
+    const updBtn = document.getElementById("btn2");
+    const delBtn = document.getElementById("btn3");
+
+function sendData(){
+   
+
+    set(ref(db , "data/" + rollNo.value) , {name : name.value,
+         rollNo : rollNo.value ,
+          Class : Class.value , 
+          section : section.value})
+    .then((success) => {  
+        console.log(success , "success")
+    })
+    .catch((error) => {
+        console.log(error,  "error");
+    });
+    name.value = ""
+    rollNo.value = ""
+    Class.value = ""
+    section.value = ""
+    
+}
+sendBtn.addEventListener('click' , sendData);
+function getData() {
+    const dbref = ref(db)
+   
+    get(child(dbref , "data/" + rollNo.value))
+    .then((data) => {
+        if(data.exists()){
+             name.value = data.val().name
+             section.value = data.val().section 
+             Class.value = data.val().Class;  
+        } 
+        else {
+            alert("No Data Found")
+        }
+
+    })  
+    .catch((error) => {
+        console.log(error , "error");
+    })
+}
+getBtn.addEventListener('click' , getData);
+function updData(){
+    update(ref(db , "data/" + rollNo.value) , {
+        name : name.value,
+          Class : Class.value , 
+          section : section.value
+    })
+    .then(() => {
+        console.log("data updated successfully");
+    })
+    .catch((error) => {
+        alert(error , "error")
+    })
+
+}
+updBtn.addEventListener('click' , updData);
+function delData(){
+    remove(ref(db , "data/" + rollNo.value) )
+    .then(() => {
+        console.log("removed successfully")
+    })
+    .catch((error) =>{
+        console.log("error" , error)
+    })
+} 
+delBtn.addEventListener('click' , delData);
+
+
+
+
+</script>
+</html>
